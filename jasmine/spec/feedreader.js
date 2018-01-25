@@ -30,14 +30,14 @@ $(function() {
 		it('has URL', function() {
 			allFeeds.forEach(function(f){
 				expect(f.url).toBeDefined();
-				expect(f.url).not.toBe(0);
+				expect(f.url.length).not.toBe(0);
 			});
 		});
 		
 		it('has name', function() {
 			allFeeds.forEach(function(f){
 				expect(f.name).toBeDefined();
-				expect(f.name).not.toBe(0);
+				expect(f.name.length).not.toBe(0);
 			});
 		});
     });
@@ -62,11 +62,12 @@ $(function() {
 	// The expect checks if there is more than 0 children on .feed element
 	describe('Initial Entries', function(){
 		beforeEach(function(done){
-			loadFeed(0, done);
+			loadFeed(0, function(){
+				done();
+			});
 		});
-		it('loaded', function(done){
-			expect($('.feed').children().length).toBeGreaterThan(0);
-			done();
+		it('loaded', function(){
+			expect($('.feed .entry').length).toBeGreaterThan(0);
 		});
 	});
 
@@ -75,18 +76,20 @@ $(function() {
 	 * On the expect i check if their values are not the same
 	 */
 	describe('New Feed Selection', function(){
+		var before;
+		var after;
 		beforeEach(function(done){
 			loadFeed(0, function(){
 				before = $('.feed').html();
+				loadFeed(1, function(){
+					after = $('.feed').html();
+					done();
+				});
 			});
-			loadFeed(1, function(){
-				after = $('.feed').html();
-				done();
-			});
+
 		});
-		it('changes the content', function(done){
+		it('changes the content', function(){
 			expect(before).not.toEqual(after);
-			done();
 		});
 	});
 }());
